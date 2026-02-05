@@ -234,8 +234,8 @@ logger.error = (msg, options) => {
 }
 
 export default defineConfig({
-	base: './', // 🔥 FIX blank page di static hosting / Horizons custom domain
-	
+	base: './',
+
 	customLogger: logger,
 	plugins: [
 		...(isDev ? [inlineEditPlugin(), editModeDevPlugin(), iframeRouteRestorationPlugin(), selectionModePlugin()] : []),
