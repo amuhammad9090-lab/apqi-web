@@ -4,10 +4,10 @@ import { useAdminAuth } from '@/contexts/AdminAuthContext';
 import { Loader2 } from 'lucide-react';
 
 const AdminGuard = ({ children }) => {
-  const { adminUser, isLoading } = useAdminAuth();
+  const { adminUser, loading } = useAdminAuth();
   const location = useLocation();
 
-  if (isLoading) {
+  if (loading) {
     return (
       <div className="flex flex-col items-center justify-center min-h-screen bg-slate-50">
         <Loader2 className="w-10 h-10 animate-spin text-sky-600 mb-4" />

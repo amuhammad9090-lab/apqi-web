@@ -31,15 +31,18 @@ export const testSupabaseConnection = async () => {
     if (!results.urlConfigured || !results.keyConfigured) {
       results.error = 'Missing Supabase environment variables.';
       results.details = 'Please ensure VITE_SUPABASE_URL and VITE_SUPABASE_ANON_KEY are correctly set in your .env file.';
-      throw new Error(results.error);
+      // We return early here because we can't test connection without credentials
+      return { success: false, ...results };
     }
 
     // 2. Test Connection & Latency by trying to query a public table
     const start = performance.now();
     
+    // We use a lightweight query. Even if the table doesn't exist or RLS blocks it,
+    // getting a response from the server proves connectivity.
     const { error, status } = await supabase
-      .from('news') // Use a public table like 'news'
-      .select('id', { count: 'exact', head: true }); // Lightweight query to check connectivity
+      .from('news') 
+      .select('id', { count: 'exact', head: true }); 
       
     const end = performance.now();
     results.latency = Math.round(end - start);
@@ -51,19 +54,29 @@ export const testSupabaseConnection = async () => {
         console.warn('⚠️ Connection successful, but access denied (RLS/Auth). This is normal for public read attempts on protected tables. Latency: %sms', results.latency);
         results.connectionSuccessful = true;
         results.details = 'Supabase server reachable, but RLS or authentication might be restricting access to specific data.';
-      } else if (error.message.includes("fetch failed") || error.code === 'ECONNREFUSED') {
+      } else if (error.message && (error.message.includes("fetch failed") || error.message.includes("Failed to fetch"))) {
         results.error = 'Network connection failed.';
         results.details = `Could not reach Supabase server. Check your internet connection or if the Supabase URL is correct. Error: ${error.message}`;
       } else {
-        results.error = 'Supabase client error.';
-        results.details = `An unexpected error occurred while connecting. Details: ${error.message} (Code: ${error.code || 'N/A'}, Status: ${status || 'N/A'})`;
+        // Other API errors (e.g. 404 table not found) still mean we connected successfully
+        if (status === 404 || error.code === 'PGRST200') {
+             results.connectionSuccessful = true;
+             results.details = 'Connected to Supabase, but the specific table was not found. This is a configuration issue, not a connection issue.';
+        } else {
+            results.error = 'Supabase client error.';
+            results.details = `An unexpected error occurred while connecting. Details: ${error.message} (Code: ${error.code || 'N/A'}, Status: ${status || 'N/A'})`;
+        }
       }
-      if (results.error) throw new Error(results.error);
-    } else {
-      results.connectionSuccessful = true;
-      console.log(`✅ Supabase connection verified in ${results.latency}ms.`);
-    }
-
+      
+      if (results.error) {
+          // If we explicitly set an error above, return failure
+          return { success: false, ...results };
+      }
+    } 
+    
+    // If we got here, either no error occurred, or it was a "soft" error (RLS/404) that implies connectivity
+    results.connectionSuccessful = true;
+    console.log(`✅ Supabase connection verified in ${results.latency}ms.`);
     return { success: true, ...results };
 
   } catch (error) {

@@ -17,3 +17,42 @@ body {
   padding: 0;
   box-sizing: border-box;
 }
+
+/* Fix Quill text alignment */
+.prose *[style*="text-align"] {
+  text-align: inherit !important;
+}
+
+.prose p[style*="text-align: justify"] {
+  text-align: justify !important;
+}
+
+.prose p[style*="text-align: center"] {
+  text-align: center !important;
+}
+
+.prose p[style*="text-align: right"] {
+  text-align: right !important;
+}
+
+.prose .ql-align-justify {
+  text-align: justify !important;
+}
+
+.prose .ql-align-center {
+  text-align: center !important;
+}
+
+.prose .ql-align-right {
+  text-align: right !important;
+}
+
+/* Basic Dark Mode - Clean & Simple */
+.dark {
+  color-scheme: dark;
+}
+
+.dark body {
+  background-color: #0f172a;
+  color: #e2e8f0;
+}

@@ -1,17 +1,25 @@
-import { initializeApp } from 'firebase/app';
-import { getAuth } from 'firebase/auth';
-import { getStorage } from 'firebase/storage';
+import { initializeApp } from "firebase/app"
+import { getAuth } from "firebase/auth"
+import { getFirestore } from "firebase/firestore"
+import { getStorage } from "firebase/storage"
 
 const firebaseConfig = {
-  apiKey: "AIzaSyAA2wnefOj9KI9YDe8OJoaGsdCJ3KWkH8U",
-  authDomain: "projectapqi-web.firebaseapp.com",
-  projectId: "projectapqi-web",
-  storageBucket: "projectapqi-web.firebasestorage.app",
-  messagingSenderId: "837087733188",
-  appId: "1:837087733188:web:e5ace9d263148a39453091",
-  measurementId: "G-FT1LCDKHVH"
-};
+  apiKey: import.meta.env.VITE_FIREBASE_API_KEY,
+  authDomain: import.meta.env.VITE_FIREBASE_AUTH_DOMAIN,
+  projectId: import.meta.env.VITE_FIREBASE_PROJECT_ID,
+  storageBucket: import.meta.env.VITE_FIREBASE_STORAGE_BUCKET,
+  appId: import.meta.env.VITE_FIREBASE_APP_ID,
+}
 
-const app = initializeApp(firebaseConfig);
-export const auth = getAuth(app);
-export const storage = getStorage(app);
+// 🔥 FAIL FAST (jangan silent)
+Object.entries(firebaseConfig).forEach(([key, value]) => {
+  if (!value) {
+    throw new Error(`Firebase env missing: ${key}`)
+  }
+})
+
+const app = initializeApp(firebaseConfig)
+
+export const auth = getAuth(app)
+export const db = getFirestore(app)
+export const storage = getStorage(app)

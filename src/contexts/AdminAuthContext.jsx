@@ -1,127 +1,121 @@
 import React, { createContext, useContext, useEffect, useState } from 'react';
 import { supabase } from '@/lib/customSupabaseClient';
+import { auth } from '@/config/firebase';
+import { signInWithEmailAndPassword, signOut as firebaseSignOut, onAuthStateChanged } from 'firebase/auth';
 
 const AdminAuthContext = createContext();
 
 export const useAdminAuth = () => {
-  const context = useContext(AdminAuthContext);
-  if (!context) {
-    throw new Error('useAdminAuth must be used within AdminAuthProvider');
-  }
-  return context;
+	const context = useContext(AdminAuthContext);
+	if (context === undefined) {
+		throw new Error('useAdminAuth must be used within an AdminAuthProvider');
+	}
+	return context;
 };
 
 export const AdminAuthProvider = ({ children }) => {
-  const [adminUser, setAdminUser] = useState(null);
-  const [loading, setLoading] = useState(true);
+	const [user, setUser] = useState(null);
+	const [loading, setLoading] = useState(true);
+	const [error, setError] = useState(null);
 
-  // Check if user is already logged in
-  useEffect(() => {
-    const checkAuth = async () => {
-      try {
-        const { data: { session } } = await supabase.auth.getSession();
-        if (session?.user) {
-          // Check if admin
-          const { data: userProfile } = await supabase
-            .from('users')
-            .select('role')
-            .eq('id', session.user.id)
-            .single();
+	const checkAdminPrivileges = async (userId) => {
+		if (!userId) return null;
 
-          if (userProfile?.role === 'admin') {
-            setAdminUser(session.user);
-          }
-        }
-      } catch (err) {
-        console.error('Auth check error:', err);
-      } finally {
-        setLoading(false);
-      }
-    };
+		try {
+			// Fetch role from public.users in Supabase
+			const { data, error } = await supabase
+				.from('users')
+				.select('role')
+				.eq('id', userId)
+				.single();
 
-    checkAuth();
+			if (error) {
+				// If RLS blocks us or row missing, assume not admin
+				console.warn('Admin check failed:', error.message);
+				return null;
+			}
 
-    // Listen for auth state changes
-    const { data: { subscription } } = supabase.auth.onAuthStateChange(
-      async (_event, session) => {
-        if (session?.user) {
-          const { data: userProfile } = await supabase
-            .from('users')
-            .select('role')
-            .eq('id', session.user.id)
-            .single();
+			if (data?.role === 'admin') {
+				return { id: userId, role: 'admin' };
+			}
+			return null;
+		} catch (err) {
+			console.error('Admin privilege check error:', err);
+			return null;
+		}
+	};
 
-          if (userProfile?.role === 'admin') {
-            setAdminUser(session.user);
-          } else {
-            setAdminUser(null);
-          }
-        } else {
-          setAdminUser(null);
-        }
-      }
-    );
+	useEffect(() => {
+		const unsubscribe = onAuthStateChanged(auth, async (currentUser) => {
+			if (currentUser) {
+				const adminUser = await checkAdminPrivileges(currentUser.uid);
+				if (adminUser) {
+					setUser({ ...currentUser, ...adminUser });
+				} else {
+					setUser(null);
+				}
+			} else {
+				setUser(null);
+			}
+			setLoading(false);
+		});
 
-    return () => subscription?.unsubscribe();
-  }, []);
+		return () => unsubscribe();
+	}, []);
 
-  // Login function
-  const login = async (email, password) => {
-    try {
-      const { data, error } = await supabase.auth.signInWithPassword({
-        email,
-        password
-      });
+	const signInWithPassword = async (email, password) => {
+		try {
+			setLoading(true);
+			setError(null);
 
-      if (error) {
-        throw new Error(error.message || 'Login failed');
-      }
+			// 1. Perform Firebase Auth Login
+			const userCredential = await signInWithEmailAndPassword(auth, email, password);
+			const firebaseUser = userCredential.user;
 
-      // Check if admin
-      const { data: userProfile, error: profileError } = await supabase
-        .from('users')
-        .select('role')
-        .eq('id', data.user.id)
-        .single();
+			// 2. Check Permissions in Supabase immediately
+			const adminUser = await checkAdminPrivileges(firebaseUser.uid);
 
-      if (profileError) {
-        await supabase.auth.signOut();
-        throw new Error('User profile not found');
-      }
+			if (!adminUser) {
+				await firebaseSignOut(auth);
+				throw new Error("Access Denied: You do not have administrator privileges.");
+			}
 
-      if (userProfile?.role !== 'admin') {
-        await supabase.auth.signOut();
-        throw new Error('You do not have administrator privileges');
-      }
+			// Success
+			setUser({ ...firebaseUser, ...adminUser });
+			return { user: firebaseUser, error: null };
 
-      setAdminUser(data.user);
-      return data;
-    } catch (err) {
-      throw err;
-    }
-  };
+		} catch (err) {
+			console.error("Admin Login Error:", err);
+			setError(err.message);
+			return { user: null, error: err };
+		} finally {
+			setLoading(false);
+		}
+	};
 
-  // Logout function
-  const logout = async () => {
-    try {
-      await supabase.auth.signOut();
-      setAdminUser(null);
-    } catch (err) {
-      console.error('Logout error:', err);
-      setAdminUser(null);
-    }
-  };
+	const signOut = async () => {
+		try {
+			await firebaseSignOut(auth);
+			setUser(null);
+		} catch (err) {
+			setError(err.message);
+		}
+	};
 
-  const value = {
-    adminUser,
-    loading,
-    login,
-    logout
-  };
+	const value = {
+		user,
+		adminUser: user,
+		loading,
+		error,
+		signInWithPassword,
+		login: signInWithPassword,
+		signOut,
+		logout: signOut  // Alias for compatibility
+	};
 
-  return (
-    <AdminAuthContext.Provider value={value}>
-      {children}
-    </AdminAuthContext.Provider>
-  );
+	return (
+		<AdminAuthContext.Provider value={value}>
+			{children}
+		</AdminAuthContext.Provider>
+	);
 };

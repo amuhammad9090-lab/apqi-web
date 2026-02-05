@@ -1,0 +1,12 @@
+## Pages
+- [- APQI News](/newsdetail): No description available
+- [Berita & Artikel - APQI](/news): Berita terbaru, artikel, dan informasi kegiatan seputar Asosiasi Pegiat Al-Qur
+- [Daftar Anggota - APQI](/register): Daftar menjadi anggota APQI
+- [Dashboard Anggota - APQI](/dashboard): Dashboard Anggota APQI
+- [Dewan Pengurus - APQI](/dewanpengurus): Susunan lengkap Dewan Pengurus Asosiasi Pegiat Al-Qur
+- [Kebijakan Privasi - APQI](/privacypolicy): Kebijakan privasi Asosiasi Pegiat Al-Qur
+- [Kontak Kami - APQI](/contact): Hubungi Asosiasi Pegiat Quran Indonesia.
+- [Layanan Kami - APQI](/services): Daftar layanan APQI mulai dari aplikasi Smart Tilawah, Mentoring, hingga Sertifikasi Pengajar.
+- [Login - APQI](/login): Login ke akun anggota APQI
+- [Syarat dan Ketentuan - APQI](/termsofservice): Syarat dan Ketentuan Layanan APQI
+- [Tentang Kami - APQI](/about): Profil lengkap Asosiasi Pegiat Al-Qur

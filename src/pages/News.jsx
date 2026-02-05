@@ -19,7 +19,7 @@ const News = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [sortOrder, setSortOrder] = useState("terbaru");
 
-  const categories = ["Semua", "Teknologi", "Kesuksesan", "Edukasi", "Pendidikan", "Acara", "Pengumuman"];
+  const categories = ["Semua", "Kegiatan", "Pengumuman", "Artikel", "Opini", "Lainnya"];
 
   useEffect(() => {
     const fetchNews = async () => {

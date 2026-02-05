@@ -1,7 +1,10 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
+import { auth } from '@/config/firebase';
+import { onAuthStateChanged } from 'firebase/auth';
 import { supabase } from '@/lib/customSupabaseClient';
 import { securityLogger } from '@/lib/securityLogger';
 import { cookieManager } from '@/lib/cookieManager';
+import { loginUser, logoutUser, registerUser } from '@/lib/firebaseAuth';
 
 const AuthContext = createContext();
 
@@ -14,7 +17,7 @@ export const AuthProvider = ({ children }) => {
   const [userRole, setUserRole] = useState(null); // 'user' or 'admin'
   const [loading, setLoading] = useState(true);
 
-  // Helper to fetch user role from custom 'users' table
+  // Helper to fetch user role from custom 'users' table in Supabase
   const fetchUserRole = async (userId) => {
     try {
       const { data, error } = await supabase
@@ -35,85 +38,61 @@ export const AuthProvider = ({ children }) => {
   };
 
   useEffect(() => {
-    // Check active session
-    const getSession = async () => {
+    const unsubscribe = onAuthStateChanged(auth, async (user) => {
+      setLoading(true);
       try {
-        const { data: { session }, error } = await supabase.auth.getSession();
-        
-        if (error) {
-          securityLogger.logError(error, 'AuthContext.getSession');
-        }
-
-        if (session?.user) {
-          const role = await fetchUserRole(session.user.id);
-          setCurrentUser(session.user);
+        if (user) {
+          const role = await fetchUserRole(user.uid);
+          setCurrentUser(user);
           setUserRole(role);
-          // Set a non-HttpOnly cookie for client-side awareness if needed
+          // Set a non-HttpOnly cookie for client-side awareness
           cookieManager.setCookie('apqi_user_session', 'active', 7);
+          securityLogger.logAuthAttempt(true, 'session_restore');
         } else {
           setCurrentUser(null);
           setUserRole(null);
           cookieManager.removeCookie('apqi_user_session');
         }
       } catch (error) {
-        securityLogger.logError(error, 'AuthContext.getSession.catch');
+        console.error("Error in auth state change:", error);
+        setCurrentUser(null);
       } finally {
         setLoading(false);
       }
-    };
-    getSession();
-
-    // Listen for changes
-    const { data: { subscription } } = supabase.auth.onAuthStateChange(async (_event, session) => {
-      if (session?.user) {
-        // Only fetch role if we don't have it or user changed
-        if (!currentUser || currentUser.id !== session.user.id) {
-            const role = await fetchUserRole(session.user.id);
-            setUserRole(role);
-        }
-        setCurrentUser(session.user);
-        cookieManager.setCookie('apqi_user_session', 'active', 7);
-        securityLogger.logAuthAttempt(true, 'session_refresh');
-      } else {
-        setCurrentUser(null);
-        setUserRole(null);
-        cookieManager.removeCookie('apqi_user_session');
-      }
-      setLoading(false);
     });
 
-    return () => subscription.unsubscribe();
-  }, [currentUser]); // Added currentUser to dependency array to ensure role is fetched if currentUser changes
+    return () => unsubscribe();
+  }, []);
 
   const signup = async (email, password) => {
-    const { data, error } = await supabase.auth.signUp({ email, password });
+    const { user, error } = await registerUser(email, password);
     if (error) {
       securityLogger.logAuthAttempt(false, email);
       throw error;
     }
     securityLogger.logAuthAttempt(true, email);
-    return data;
+    return user;
   };
 
   const login = async (email, password) => {
-    const { data, error } = await supabase.auth.signInWithPassword({ email, password });
+    const { user, error } = await loginUser(email, password);
     if (error) {
       securityLogger.logAuthAttempt(false, email);
       throw error;
     }
     
     // Fetch role immediately after login
-    if (data.user) {
-      const role = await fetchUserRole(data.user.id);
+    if (user) {
+      const role = await fetchUserRole(user.uid);
       setUserRole(role);
     }
 
     securityLogger.logAuthAttempt(true, email);
-    return data;
+    return user;
   };
 
   const logout = async () => {
-    const { error } = await supabase.auth.signOut();
+    const { error } = await logoutUser();
     if (error) {
       securityLogger.logError(error, 'AuthContext.logout');
       throw error;
