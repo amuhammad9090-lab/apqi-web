@@ -1,6 +1,7 @@
+
 import React, { useEffect, useState } from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
-import { AuthProvider } from '@/contexts/AuthContext';
+import { AuthProvider } from '@/contexts/SupabaseAuthContext';
 import { AdminAuthProvider } from '@/contexts/AdminAuthContext';
 import AuthGuard from '@/components/AuthGuard';
 import AdminGuard from '@/components/AdminGuard';
@@ -27,12 +28,19 @@ import Dashboard from '@/pages/Dashboard';
 import SmartTilawah from '@/pages/services/SmartTilawah';
 import Mentoring from '@/pages/services/Mentoring';
 import Pengajar from '@/pages/services/Pengajar';
+import MentoringTahsin from '@/pages/services/MentoringTahsin';
+import BimbinganAkademik from '@/pages/services/BimbinganAkademik';
+import DaftarPengajar from '@/pages/services/DaftarPengajar';
 
 // Admin Pages
 import AdminLoginPage from '@/pages/admin/AdminLoginPage';
 import AdminDashboard from '@/pages/admin/Dashboard';
 import CreateNewsPage from '@/pages/admin/CreateNewsPage';
 import EditNewsPage from '@/pages/admin/EditNewsPage';
+import AdminTeachersPage from '@/pages/admin/AdminTeachersPage';
+import AdminEditorialTeamPage from '@/pages/admin/AdminEditorialTeamPage';
+import AdminZoomLinksPage from '@/pages/admin/AdminZoomLinksPage';
+import AdminAnalyticsDashboard from '@/pages/admin/AdminAnalyticsDashboard';
 
 import { Toaster } from '@/components/ui/toaster';
 
@@ -56,14 +64,11 @@ function App() {
         setConnectionStatus({ loading: false, success: res.success, message: res.error || '' });
         
         if (!res.success) {
-          // If it's a configuration error (missing env vars), we block the app
           if (res.error && res.error.includes('Missing Supabase')) {
              setAppInitError(res.error);
           } else {
-             // If it's just a network error, we allow the app to load in "offline" mode or show a toast
              console.warn("App running with connection issues:", res.error);
              setIsOfflineMode(true);
-             // We don't set appInitError here to allow the UI to render
           }
         } else {
           setAppInitError(null);
@@ -72,7 +77,6 @@ function App() {
     } catch (err) {
         console.error("Critical failure in diagnostics:", err);
         setConnectionStatus({ loading: false, success: false, message: err.message });
-        // Fallback to allow app to try rendering
     }
   };
 
@@ -80,7 +84,6 @@ function App() {
     runDiagnostics();
   }, []);
 
-  // Only block the entire app for critical configuration errors
   if (appInitError) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-slate-50 dark:bg-slate-900 p-4">
@@ -90,13 +93,7 @@ function App() {
             <h1 className="text-xl font-bold">Configuration Error</h1>
           </div>
           <p className="text-slate-600 dark:text-slate-300 mb-4">{appInitError}</p>
-          <p className="text-sm text-slate-500 mb-4">Please check your environment variables.</p>
-          <button
-              onClick={() => window.location.reload()}
-              className="mt-4 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
-            >
-              Reload Application
-          </button>
+          <button onClick={() => window.location.reload()} className="mt-4 px-4 py-2 bg-blue-600 text-white rounded-lg">Reload</button>
         </div>
       </div>
     );
@@ -106,10 +103,7 @@ function App() {
     return (
       <div className="min-h-screen flex items-center justify-center bg-slate-50 dark:bg-slate-900 p-4">
         <div className="text-center">
-          <svg className="animate-spin h-10 w-10 text-sky-600 mx-auto mb-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-            <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-            <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-          </svg>
+          <svg className="animate-spin h-10 w-10 text-sky-600 mx-auto mb-4" viewBox="0 0 24 24"><circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle><path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
           <p className="text-slate-700 dark:text-slate-300">Initializing application...</p>
         </div>
       </div>
@@ -133,48 +127,40 @@ function App() {
               <Route path="/about" element={<About />} />
               <Route path="/dewan-pengurus" element={<DewanPengurus />} />
               <Route path="/services" element={<Services />} />
+              
+              {/* New Service Routes */}
               <Route path="/services/smart-tilawah" element={<SmartTilawah />} />
               <Route path="/services/mentoring" element={<Mentoring />} />
+              <Route path="/services/mentoring-tahsin" element={<MentoringTahsin />} />
+              <Route path="/services/bimbingan-akademik" element={<BimbinganAkademik />} />
+              <Route path="/services/daftar-pengajar" element={<DaftarPengajar />} />
               <Route path="/services/pengajar" element={<Pengajar />} />
+
               <Route path="/news" element={<News />} />
               <Route path="/news/:id" element={<NewsDetail />} />
               <Route path="/contact" element={<Contact />} />
               <Route path="/login" element={<Login />} />
               <Route path="/register" element={<Register />} />
               
-              {/* Legal Pages */}
               <Route path="/privacy-policy" element={<PrivacyPolicy />} />
               <Route path="/terms-of-service" element={<TermsOfService />} />
 
               {/* Protected Member Routes */}
-              <Route path="/dashboard" element={
-                <AuthGuard>
-                  <Dashboard />
-                </AuthGuard>
-              } />
+              <Route path="/dashboard" element={<AuthGuard><Dashboard /></AuthGuard>} />
 
               {/* Admin Routes */}
               <Route path="/admin/login" element={<AdminLoginPage />} />
               
-              <Route path="/admin/dashboard" element={
-                <AdminGuard>
-                  <AdminDashboard />
-                </AdminGuard>
-              } />
+              <Route path="/admin/dashboard" element={<AdminGuard><AdminDashboard /></AdminGuard>} />
+              <Route path="/admin/news/create" element={<AdminGuard><CreateNewsPage /></AdminGuard>} />
+              <Route path="/admin/news/edit/:id" element={<AdminGuard><EditNewsPage /></AdminGuard>} />
               
-              <Route path="/admin/news/create" element={
-                <AdminGuard>
-                  <CreateNewsPage />
-                </AdminGuard>
-              } />
-              
-              <Route path="/admin/news/edit/:id" element={
-                <AdminGuard>
-                  <EditNewsPage />
-                </AdminGuard>
-              } />
+              {/* New Admin Routes */}
+              <Route path="/admin/teachers" element={<AdminGuard><AdminTeachersPage /></AdminGuard>} />
+              <Route path="/admin/editorial-team" element={<AdminGuard><AdminEditorialTeamPage /></AdminGuard>} />
+              <Route path="/admin/zoom-links" element={<AdminGuard><AdminZoomLinksPage /></AdminGuard>} />
+              <Route path="/admin/analytics" element={<AdminGuard><AdminAnalyticsDashboard /></AdminGuard>} />
 
-              {/* Fallback */}
               <Route path="*" element={<Navigate to="/" replace />} />
             </Routes>
             <Toaster />

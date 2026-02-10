@@ -11,16 +11,16 @@ export function useTheme() {
 
   useEffect(() => {
     const root = window.document.documentElement;
-    
+
     // Remove both theme classes
     root.classList.remove('light', 'dark');
-    
+
     // Add current theme class
     root.classList.add(theme);
-    
+
     // Save to localStorage
     localStorage.setItem('theme', theme);
-    
+
     // Optional: Update meta theme-color for mobile browsers
     const metaThemeColor = document.querySelector('meta[name="theme-color"]');
     if (metaThemeColor) {

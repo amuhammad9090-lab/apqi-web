@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -30,8 +31,9 @@ const Navbar = () => {
       path: '/services', 
       dropdown: [
         { name: 'Smart Tilawah', path: '/services/smart-tilawah' },
-        { name: 'Mentoring', path: '/services/mentoring' },
-        { name: 'Pengajar', path: '/services/pengajar' },
+        { name: 'Mentoring Tahsin & Tahfizh', path: '/services/mentoring-tahsin' },
+        { name: 'Bimbingan Akademik', path: '/services/bimbingan-akademik' },
+        { name: 'Daftar Pengajar', path: '/services/daftar-pengajar' },
       ]
     },
     { 

@@ -4,7 +4,7 @@ import { useAdminAuth } from '@/contexts/AdminAuthContext';
 import { Loader2 } from 'lucide-react';
 
 const AdminGuard = ({ children }) => {
-  const { adminUser, loading } = useAdminAuth();
+  const { adminUser, loading } = useAdminAuth(); // ⬅️ FIX DI SINI
   const location = useLocation();
 
   if (loading) {

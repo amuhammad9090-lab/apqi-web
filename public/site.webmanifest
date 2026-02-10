@@ -1,21 +1,23 @@
 {
-  "name": "MyWebSite",
-  "short_name": "MySite",
+  "name": "APQI - Asosiasi Pegiat Al-Qur'an Indonesia",
+  "short_name": "APQI",
+  "theme_color": "#14b8a6",
+  "background_color": "#ffffff",
+  "display": "standalone",
+  "start_url": "/",
+  "scope": "/",
   "icons": [
     {
-      "src": "/web-app-manifest-192x192.png",
+      "src": "https://horizons-cdn.hostinger.com/301c90b1-6ad0-4903-8c20-8c8de50b6d56/729657ba61f65806215eed8adea99425.png",
       "sizes": "192x192",
       "type": "image/png",
-      "purpose": "maskable"
+      "purpose": "any maskable"
     },
     {
-      "src": "/web-app-manifest-512x512.png",
+      "src": "https://horizons-cdn.hostinger.com/301c90b1-6ad0-4903-8c20-8c8de50b6d56/729657ba61f65806215eed8adea99425.png",
       "sizes": "512x512",
       "type": "image/png",
-      "purpose": "maskable"
+      "purpose": "any maskable"
     }
-  ],
-  "theme_color": "#ffffff",
-  "background_color": "#ffffff",
-  "display": "standalone"
+  ]
 }
