@@ -1,49 +1,41 @@
-# ===============================
 # Node / Vite
-# ===============================
 node_modules/
 dist/
 dist-ssr/
 .vite/
 
-# ===============================
 # Env (Firebase secrets, API keys)
-# ===============================
 .env
 .env.*
 !.env.example
 
-# ===============================
 # Logs
-# ===============================
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
 pnpm-debug.log*
 *.log
 
-# ===============================
 # OS / Editor junk
-# ===============================
 .DS_Store
 Thumbs.db
 desktop.ini
+.AppleDouble
+.LSOverride
 
-# ===============================
 # VS Code
-# ===============================
 .vscode/*
 !.vscode/extensions.json
 !.vscode/settings.json
 
-# ===============================
 # Build / Cache
-# ===============================
 .cache/
 .eslintcache
+*.tsbuildinfo
 
-# ===============================
-# Firebase local (kalau pakai emulator nanti)
-# ===============================
+# Coverage (testing)
+coverage/
+
+# Firebase local (emulator/debug)
 .firebase/
 firebase-debug.log*
