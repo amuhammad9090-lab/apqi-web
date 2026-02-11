@@ -3,8 +3,6 @@ import { Helmet } from 'react-helmet';
 import { motion } from 'framer-motion';
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
-import DewanPembinaSection from '@/components/DewanPembinaSection';
-import DewanPengawasSection from '@/components/DewanPengawasSection';
 import PengurusHarianSection from '@/components/PengurusHarianSection';
 import KetuaDivisiSection from '@/components/KetuaDivisiSection';
 import AnggotaDivisiSection from '@/components/AnggotaDivisiSection';
@@ -51,26 +49,6 @@ const DewanPengurus = () => {
         <div className="bg-white">
           <section className="container mx-auto px-4 md:px-6 py-16 md:py-24 space-y-24">
             
-            {/* Pembina */}
-            <div>
-              <div className="text-center mb-12">
-                <span className="text-sky-600 font-semibold tracking-wider uppercase text-sm">Penasihat & Pembimbing</span>
-                <h2 className="text-3xl font-bold text-slate-900 mt-2">Dewan Pembina</h2>
-                <div className="w-20 h-1.5 bg-sky-500 mx-auto mt-4 rounded-full"></div>
-              </div>
-              <DewanPembinaSection />
-            </div>
-
-            {/* Pengawas */}
-            <div>
-              <div className="text-center mb-12">
-                <span className="text-emerald-600 font-semibold tracking-wider uppercase text-sm">Pengawasan & Kepatuhan</span>
-                <h2 className="text-3xl font-bold text-slate-900 mt-2">Dewan Pengawas</h2>
-                <div className="w-20 h-1.5 bg-emerald-500 mx-auto mt-4 rounded-full"></div>
-              </div>
-              <DewanPengawasSection />
-            </div>
-
             {/* Pengurus Harian */}
             <div className="bg-slate-50 -mx-4 md:-mx-6 px-4 md:px-6 py-16 md:py-24 rounded-3xl">
               <div className="container mx-auto">

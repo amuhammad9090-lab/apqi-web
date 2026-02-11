@@ -1,3 +1,4 @@
+
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { auth } from '@/config/firebase';
 import { onAuthStateChanged } from 'firebase/auth';
@@ -20,16 +21,19 @@ export const AuthProvider = ({ children }) => {
   // Helper to fetch user role from custom 'users' table in Supabase
   const fetchUserRole = async (userId) => {
     try {
+      // Use maybeSingle() to safely handle missing user records
       const { data, error } = await supabase
         .from('users')
         .select('role')
         .eq('id', userId)
-        .single();
+        .maybeSingle();
       
-      if (error && error.code !== 'PGRST116') { // PGRST116 is "No rows found"
+      if (error) {
         securityLogger.logError(error, 'AuthContext.fetchUserRole');
-        return 'member'; // Default to member on error or if user doesn't exist yet in public.users
+        return 'member'; // Default to member on error
       }
+      
+      // If data is null (user not found in table), default to member
       return data?.role || 'member';
     } catch (err) {
       securityLogger.logError(err, 'AuthContext.fetchUserRole.catch');

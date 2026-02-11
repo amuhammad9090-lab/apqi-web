@@ -1,7 +1,8 @@
+
 import React from 'react';
 import { Helmet } from 'react-helmet';
 import { motion } from 'framer-motion';
-import { BookOpen, Users, Award, ArrowRight, ShieldCheck, Clock, User } from 'lucide-react';
+import { BookOpen, Users, GraduationCap, ArrowRight, ShieldCheck, Clock, User } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import Layout from '@/components/Layout';
 import { useAuth } from '@/contexts/AuthContext';
@@ -12,28 +13,28 @@ const Dashboard = () => {
 
   const services = [
     {
-      title: 'Smart Tilawah',
-      description: 'Akses aplikasi belajar Al-Qur\'an berbasis AI.',
+      title: 'Mentoring Tahsin & Tahfizh',
+      description: 'Program bimbingan intensif membaca dan menghafal Al-Qur\'an secara privat atau kelompok.',
       icon: BookOpen,
-      path: '/services/smart-tilawah',
-      color: 'bg-sky-100 text-sky-600',
-      action: 'Pelajari Fitur'
-    },
-    {
-      title: 'Program Mentoring',
-      description: 'Daftar bimbingan intensif dengan mentor.',
-      icon: Users,
-      path: '/services/mentoring',
-      color: 'bg-blue-100 text-blue-600',
+      path: '/services/mentoring-tahsin',
+      color: 'bg-emerald-100 text-emerald-600',
       action: 'Lihat Program'
     },
     {
-      title: 'Sertifikasi',
-      description: 'Info uji kompetensi pengajar Al-Qur\'an.',
-      icon: Award,
-      path: '/services/pengajar',
-      color: 'bg-indigo-100 text-indigo-600',
-      action: 'Info Sertifikasi'
+      title: 'Bimbingan Akademik',
+      description: 'Layanan konsultasi dan bimbingan untuk mendukung kebutuhan akademik Anda.',
+      icon: GraduationCap,
+      path: '/services/bimbingan-akademik',
+      color: 'bg-blue-100 text-blue-600',
+      action: 'Lihat Bimbingan'
+    },
+    {
+      title: 'Daftar Pengajar',
+      description: 'Temukan direktori lengkap pengajar berkualitas yang siap membimbing Anda.',
+      icon: Users,
+      path: '/services/daftar-pengajar',
+      color: 'bg-purple-100 text-purple-600',
+      action: 'Cari Pengajar'
     }
   ];
 
@@ -81,8 +82,8 @@ const Dashboard = () => {
               {/* Services Grid */}
               <section>
                 <h2 className="text-xl font-bold text-slate-800 mb-6 flex items-center gap-2">
-                  <Award className="w-5 h-5 text-sky-600" />
-                  Layanan APQI
+                  <BookOpen className="w-5 h-5 text-sky-600" />
+                  Layanan Tersedia
                 </h2>
                 <div className="grid md:grid-cols-2 gap-6">
                   {services.map((service, index) => {
@@ -93,14 +94,14 @@ const Dashboard = () => {
                         initial={{ opacity: 0, y: 20 }}
                         animate={{ opacity: 1, y: 0 }}
                         transition={{ delay: index * 0.1 }}
-                        className="bg-white rounded-2xl p-6 shadow-sm border border-slate-100 hover:shadow-md transition-all hover:border-sky-200 group"
+                        className="bg-white rounded-2xl p-6 shadow-sm border border-slate-100 hover:shadow-md transition-all hover:border-sky-200 group flex flex-col h-full"
                       >
                         <div className={`w-12 h-12 ${service.color} rounded-xl flex items-center justify-center mb-4 group-hover:scale-110 transition-transform`}>
                           <Icon className="w-6 h-6" />
                         </div>
                         <h3 className="text-lg font-bold text-slate-900 mb-2">{service.title}</h3>
-                        <p className="text-slate-500 text-sm mb-6 min-h-[40px]">{service.description}</p>
-                        <Link to={service.path}>
+                        <p className="text-slate-500 text-sm mb-6 flex-grow">{service.description}</p>
+                        <Link to={service.path} className="mt-auto">
                           <Button variant="outline" className="w-full justify-between group-hover:bg-slate-50">
                             {service.action} <ArrowRight className="w-4 h-4" />
                           </Button>

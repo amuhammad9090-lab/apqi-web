@@ -1,3 +1,4 @@
+
 import React, { createContext, useContext, useEffect, useState } from 'react';
 import { supabase } from '@/lib/customSupabaseClient';
 import { auth } from '@/config/firebase';
@@ -23,18 +24,20 @@ export const AdminAuthProvider = ({ children }) => {
 
 		try {
 			// Fetch role from public.users in Supabase
+			// Use maybeSingle() to handle cases where user record doesn't exist yet
 			const { data, error } = await supabase
 				.from('users')
 				.select('role')
 				.eq('id', userId)
-				.single();
+				.maybeSingle();
 
 			if (error) {
-				// If RLS blocks us or row missing, assume not admin
+				// If there's a genuine error (not just missing row), log it
 				console.warn('Admin check failed:', error.message);
 				return null;
 			}
 
+			// Check if data exists and role is admin
 			if (data?.role === 'admin') {
 				return { id: userId, role: 'admin' };
 			}

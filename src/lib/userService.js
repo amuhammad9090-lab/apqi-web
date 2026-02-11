@@ -1,3 +1,4 @@
+
 import { supabase } from '@/lib/customSupabaseClient';
 
 /**
@@ -13,13 +14,14 @@ export const userService = {
    */
   checkEmailExists: async (email) => {
     try {
+      // Use maybeSingle() to avoid errors when no user is found
       const { data, error } = await supabase
         .from('users')
         .select('email')
         .eq('email', email)
-        .single();
+        .maybeSingle();
 
-      if (error && error.code !== 'PGRST116') { // PGRST116 is "No rows found"
+      if (error) {
         throw error;
       }
 

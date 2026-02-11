@@ -103,16 +103,30 @@ const AdminEditorialTeamPage = () => {
           <DialogTrigger asChild>
             <Button><Plus className="w-4 h-4 mr-2" /> Add Member</Button>
           </DialogTrigger>
-          <DialogContent>
+          <DialogContent className="bg-white text-gray-900 border border-gray-200 shadow-lg"> {/* Ensure white background, dark text, border, and shadow */}
             <DialogHeader>
-              <DialogTitle>{editingId ? 'Edit Member' : 'Add New Member'}</DialogTitle>
+              <DialogTitle className="text-gray-900">{editingId ? 'Edit Member' : 'Add New Member'}</DialogTitle> {/* Title text is dark */}
             </DialogHeader>
             <form onSubmit={handleSave} className="space-y-4">
-              <div><label className="text-sm font-medium">Name</label><Input value={formData.name} onChange={e => setFormData({...formData, name: e.target.value})} required /></div>
-              <div><label className="text-sm font-medium">Role</label><Input value={formData.role} onChange={e => setFormData({...formData, role: e.target.value})} /></div>
-              <div><label className="text-sm font-medium">Description</label><Textarea value={formData.description} onChange={e => setFormData({...formData, description: e.target.value})} /></div>
-              <div><label className="text-sm font-medium">Photo</label><Input type="file" accept="image/*" onChange={e => setFile(e.target.files[0])} /></div>
-              <Button type="submit" className="w-full" disabled={saving}>{saving ? <Loader2 className="w-4 h-4 animate-spin" /> : 'Save'}</Button>
+              <div>
+                <label htmlFor="name" className="text-sm font-medium text-gray-700">Name</label>
+                <Input id="name" className="text-gray-900 border-gray-300 placeholder-gray-400 focus:ring-blue-500 focus:border-blue-500" value={formData.name} onChange={e => setFormData({...formData, name: e.target.value})} required />
+              </div>
+              <div>
+                <label htmlFor="role" className="text-sm font-medium text-gray-700">Role</label>
+                <Input id="role" className="text-gray-900 border-gray-300 placeholder-gray-400 focus:ring-blue-500 focus:border-blue-500" value={formData.role} onChange={e => setFormData({...formData, role: e.target.value})} />
+              </div>
+              <div>
+                <label htmlFor="description" className="text-sm font-medium text-gray-700">Description</label>
+                <Textarea id="description" className="text-gray-900 border-gray-300 placeholder-gray-400 focus:ring-blue-500 focus:border-blue-500" value={formData.description} onChange={e => setFormData({...formData, description: e.target.value})} />
+              </div>
+              <div>
+                <label htmlFor="photo" className="text-sm font-medium text-gray-700">Photo</label>
+                <Input id="photo" className="text-gray-900 border-gray-300 file:text-gray-900 file:bg-gray-100 file:border-none file:mr-4 file:py-2 file:px-4 file:rounded-md" type="file" accept="image/*" onChange={e => setFile(e.target.files[0])} />
+              </div>
+              <Button type="submit" className="w-full bg-blue-600 text-white hover:bg-blue-700" disabled={saving}>
+                {saving ? <Loader2 className="w-4 h-4 animate-spin mr-2" /> : 'Save'}
+              </Button>
             </form>
           </DialogContent>
         </Dialog>

@@ -120,14 +120,14 @@ const AdminDashboard = () => {
                 
                 <div className="space-y-3">
                   <Link to={module.link}>
-                    <Button className="w-full bg-slate-900 hover:bg-slate-800">
+                    <Button className="w-full bg-slate-900 hover:bg-slate-800 text-white"> {/* Changed text color to white */}
                       {module.action}
                     </Button>
                   </Link>
                   
                   {module.subActions.map((sub, sIdx) => (
                     <Link key={sIdx} to={sub.link}>
-                      <Button variant="outline" className="w-full border-dashed">
+                      <Button variant="outline" className="w-full border-dashed text-slate-800">
                         <Plus className="w-3 h-3 mr-2" /> {sub.label}
                       </Button>
                     </Link>

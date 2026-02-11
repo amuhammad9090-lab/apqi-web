@@ -2,7 +2,6 @@
 - [- APQI News](/newsdetail): No description available
 - [Berita & Artikel - APQI](/news): Berita terbaru, artikel, dan informasi kegiatan seputar Asosiasi Pegiat Al-Qur
 - [Daftar Anggota - APQI](/register): Daftar menjadi anggota APQI
-- [Dashboard Anggota - APQI](/dashboard): Dashboard Anggota APQI
 - [Dewan Pengurus - APQI](/dewanpengurus): Susunan lengkap Dewan Pengurus Asosiasi Pegiat Al-Qur
 - [Kebijakan Privasi - APQI](/privacypolicy): Kebijakan privasi Asosiasi Pegiat Al-Qur
 - [Kontak Kami - APQI](/contact): Hubungi Asosiasi Pegiat Quran Indonesia.

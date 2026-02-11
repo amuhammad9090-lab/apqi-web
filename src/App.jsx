@@ -26,8 +26,8 @@ import TermsOfService from '@/pages/TermsOfService';
 // Member Pages
 import Dashboard from '@/pages/Dashboard';
 import SmartTilawah from '@/pages/services/SmartTilawah';
-import Mentoring from '@/pages/services/Mentoring';
-import Pengajar from '@/pages/services/Pengajar';
+// Removed: Mentoring
+// Removed: Pengajar
 import MentoringTahsin from '@/pages/services/MentoringTahsin';
 import BimbinganAkademik from '@/pages/services/BimbinganAkademik';
 import DaftarPengajar from '@/pages/services/DaftarPengajar';
@@ -130,11 +130,11 @@ function App() {
               
               {/* New Service Routes */}
               <Route path="/services/smart-tilawah" element={<SmartTilawah />} />
-              <Route path="/services/mentoring" element={<Mentoring />} />
+              {/* Removed /services/mentoring */}
               <Route path="/services/mentoring-tahsin" element={<MentoringTahsin />} />
               <Route path="/services/bimbingan-akademik" element={<BimbinganAkademik />} />
               <Route path="/services/daftar-pengajar" element={<DaftarPengajar />} />
-              <Route path="/services/pengajar" element={<Pengajar />} />
+              {/* Removed /services/pengajar */}
 
               <Route path="/news" element={<News />} />
               <Route path="/news/:id" element={<NewsDetail />} />

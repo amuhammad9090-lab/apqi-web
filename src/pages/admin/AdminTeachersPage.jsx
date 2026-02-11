@@ -139,7 +139,7 @@ const AdminTeachersPage = () => {
           <DialogTrigger asChild>
             <Button><Plus className="w-4 h-4 mr-2" /> Add Teacher</Button>
           </DialogTrigger>
-          <DialogContent>
+          <DialogContent className="bg-white text-gray-900 border border-gray-200 shadow-lg">
             <DialogHeader>
               <DialogTitle>{editingId ? 'Edit Teacher' : 'Add New Teacher'}</DialogTitle>
             </DialogHeader>
